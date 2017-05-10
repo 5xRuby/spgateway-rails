@@ -3,7 +3,7 @@ module Spgateway
     isolate_namespace Spgateway
 
     config.to_prepare do
-      ApplicationController.helper(Spgateway::Engine.helpers)
+      ::ApplicationController.helper(Spgateway::Engine.helpers)
     end
   end
 end

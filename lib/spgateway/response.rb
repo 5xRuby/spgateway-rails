@@ -4,11 +4,13 @@ module Spgateway
     attr_reader :message
     attr_reader :result
 
-    def initialize(params)
-      @status = params['Status']
-      @status = params['Message']
+    def initialize(data)
+      data = JSON.parse(data) if data.is_a? String
 
-      result = params['Result']
+      @status = data['Status']
+      @message = data['Message']
+
+      result = data['Result']
 
       result = JSON.parse(result) if result.is_a? String
 
@@ -16,17 +18,23 @@ module Spgateway
     end
 
     class Result
-      def initialize(params)
-        @data = params
+      def initialize(data)
+        @data = data
       end
 
       def valid?
-        check_value == expected_check_value
+        try(:check_value) == expected_check_value ||
+          try(:check_code) == expected_check_code
       end
 
       def expected_check_value
-        data = "Amt=#{amt}&MerchantID=#{merchant_id}&MerchantOrderNo=#{merchant_order_no}&TimeStamp=#{time_stamp}&Version=#{version}"
+        data = "Amt=#{@data['Amt']}&MerchantID=#{@data['MerchantID']}&MerchantOrderNo=#{@data['MerchantOrderNo']}&TimeStamp=#{@data['TimeStamp']}&Version=#{@data['Version']}"
         Spgateway::SHA256.hash(data)
+      end
+
+      def expected_check_code
+        data = "Amt=#{@data['Amt']}&MerchantID=#{@data['MerchantID']}&MerchantOrderNo=#{@data['MerchantOrderNo']}&TradeNo=#{@data['TradeNo']}"
+        Spgateway::SHA256.hash(data, hash_iv_first: true)
       end
 
       private

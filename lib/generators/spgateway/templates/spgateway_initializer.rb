@@ -20,4 +20,22 @@ Spgateway.configure do |config|
   # development and 'https://core.spgateway.com/MPG/mpg_gateway' for
   # production.
   config.mpg_gateway_url = 'https://ccore.spgateway.com/MPG/mpg_gateway'
+
+  # Callback after the user has been redirect back from Spgateway MPG gateway.
+  config.mpg_callback do |mpg_response, controller, url_helpers|
+    fail "Please configure mpg_callback in #{__FILE__}"
+    # Put the trade result proceeding logic here.
+    #
+    # Example implementation:
+    #
+    # if mpg_response.status == 'SUCCESS'
+    #   Order.find_by(serial: mpg_response.result.merchant_order_no)
+    #        .update_attributes(paid: true)
+    #   controller.flash[:success] = mpg_response.message
+    # else
+    #   controller.flash[:error] = mpg_response.message
+    # end
+    #
+    # controller.redirect_to url_helpers.orders_path
+  end
 end
