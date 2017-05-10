@@ -1,7 +1,8 @@
+require "spgateway/engine"
+
 module Spgateway
   module Rails
-    class Engine < ::Rails::Engine
-      isolate_namespace Spgateway::Rails
+    class Engine < Spgateway::Engine
     end
   end
 end

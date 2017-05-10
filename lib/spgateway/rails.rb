@@ -1,7 +1,6 @@
-require "spgateway/rails/engine"
+require "spgateway"
 
 module Spgateway
   module Rails
-    # Your code goes here...
   end
 end
