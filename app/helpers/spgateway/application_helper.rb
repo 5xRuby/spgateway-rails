@@ -1,8 +1,8 @@
 module Spgateway
   module ApplicationHelper
     def spgateway_mpg_form_for(mpg_form_object, submit: 'Go', submit_class: '', mpg_gateway_url: Spgateway.config.mpg_gateway_url)
-      unless mpg_form_object.is_a? Spgateway::MPGFormObject
-        raise ArgumentError, "The first argument for 'pay2goo_form_for' must be a Spgateway::MPGFormObject."
+      unless mpg_form_object.is_a? Spgateway::MPGForm
+        raise ArgumentError, "The first argument for 'pay2goo_form_for' must be a Spgateway::MPGForm."
       end
 
       form_tag(mpg_gateway_url, method: :post) do

@@ -2,7 +2,7 @@ require "spgateway/version"
 require "spgateway/config"
 require "spgateway/engine"
 require "spgateway/sha256"
-require "spgateway/mpg_form_object"
+require "spgateway/mpg_form"
 
 module Spgateway
   def self.configure

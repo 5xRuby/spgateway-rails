@@ -1,5 +1,5 @@
 module Spgateway
-  class MPGFormObject
+  class MPGForm
     REQUIRED_PARAMS = %w(Version MerchantID MerchantOrderNo ItemDesc Amt TimeStamp RespondType).freeze
 
     def initialize(params)
@@ -39,6 +39,14 @@ module Spgateway
 
       return self if missing_params.count.zero?
       raise ArgumentError, "The required params: #{missing_params.map { |s| "'#{s}'" }.join(', ')} #{missing_params.count > 1 ? 'are' : 'is'} missing."
+    end
+
+    def return_url
+      @params['ReturnURL']
+    end
+
+    def return_url=(url)
+      @params['ReturnURL'] = url
     end
 
     def sorted_params
