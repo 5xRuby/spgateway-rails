@@ -1,2 +1,2 @@
-Spgateway::Rails::Engine.routes.draw do
+Spgateway::Engine.routes.draw do
 end
