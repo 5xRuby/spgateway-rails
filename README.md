@@ -1,6 +1,6 @@
 # spgateway-rails
 
-An API wrapper for [Spgateway](https://www.spgateway.com).
+An API wrapper for [Spgateway](https://www.spgateway.com), an online payment service in Taiwan.
 
 
 ## Installation
@@ -8,7 +8,7 @@ An API wrapper for [Spgateway](https://www.spgateway.com).
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'spgateway-rails'
+gem 'spgateway-rails', github: '5xRuby/spgateway-rails'
 ```
 
 And then execute:

@@ -13,6 +13,24 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'simplecov'
+require 'coveralls'
+
+SimpleCov.start do
+  load_profile "test_frameworks"
+
+  add_group "Spgateway Lib", "lib/spgateway"
+  add_group "Spgateway Generators", "lib/generators/spgateway"
+  add_group "Controllers", "app/controllers"
+  add_group "Helpers", "app/helper"
+  add_group "Jobs", "app/jobs"
+
+  track_files "{app,lib}/**/*.rb"
+end
+
+Coveralls.wear!
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
