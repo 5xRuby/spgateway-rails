@@ -1,6 +1,6 @@
-# spgateway-rails
+# Spgateway Rails Plugin [![Build Status](https://travis-ci.org/5xRuby/spgateway-rails.svg?branch=master)](https://travis-ci.org/5xRuby/spgateway-rails)
 
-An API wrapper for [Spgateway](https://www.spgateway.com).
+This plugin provides convenient integrate with [Spgateway](https://www.spgateway.com) - an online payment service in Taiwan.
 
 
 ## Installation
@@ -8,7 +8,7 @@ An API wrapper for [Spgateway](https://www.spgateway.com).
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'spgateway-rails'
+gem 'spgateway-rails', github: '5xRuby/spgateway-rails'
 ```
 
 And then execute:
@@ -22,6 +22,8 @@ Finally, run the install generator:
 ```bash
 $ rails generate spgateway:install
 ```
+
+then set your `merchant_id`, `hash_key` and `hash_iv` in `config/initializers/spgateway.rb`.
 
 
 ## Basic Usage
@@ -49,6 +51,7 @@ $ rails generate spgateway:install
   end
 ```
 
+
 ## TODO
 
 - Build API wrapper for QueryTradeInfo.
@@ -59,7 +62,7 @@ $ rails generate spgateway:install
 
 ## Contributing
 
-Contribution directions go here.
+Just open a PR :)
 
 
 ## License
