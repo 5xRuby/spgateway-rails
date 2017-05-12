@@ -1,65 +1,77 @@
 # frozen_string_literal: true
 module Spgateway
   class MPGForm
-    REQUIRED_PARAMS = %w(Version MerchantID MerchantOrderNo ItemDesc Amt TimeStamp RespondType).freeze
+    REQUIRED_ATTRS = %w(Version MerchantID MerchantOrderNo ItemDesc Amt TimeStamp RespondType).freeze
 
-    def initialize(params)
-      unless params.is_a? Hash
+    def initialize(attrs)
+      unless attrs.is_a? Hash
         raise ArgumentError, "When initializing #{self.class.name}, you must pass a hash as an argument."
       end
 
-      @params = {}
-      missing_params = REQUIRED_PARAMS.map(&:clone)
+      @attrs = {}
+      missing_attrs = REQUIRED_ATTRS.map(&:clone)
 
-      params.each_pair do |k, v|
+      attrs.each_pair do |k, v|
         key = k.to_s
         value = v.to_s
-        missing_params.delete(key)
-        @params[key] = value
+        missing_attrs.delete(key)
+        @attrs[key] = value
       end
 
-      if @params['Version'].nil?
-        @params['Version'] = '1.2'
-        missing_params.delete('Version')
+      if @attrs['Version'].nil?
+        @attrs['Version'] = '1.2'
+        missing_attrs.delete('Version')
       end
 
-      if @params['MerchantID'].nil?
-        @params['MerchantID'] = Spgateway.config.merchant_id
-        missing_params.delete('MerchantID')
+      if @attrs['MerchantID'].nil?
+        @attrs['MerchantID'] = Spgateway.config.merchant_id
+        missing_attrs.delete('MerchantID')
       end
 
-      if @params['TimeStamp'].nil?
-        @params['TimeStamp'] = Time.now.to_i
-        missing_params.delete('TimeStamp')
+      if @attrs['TimeStamp'].nil?
+        @attrs['TimeStamp'] = Time.now.to_i
+        missing_attrs.delete('TimeStamp')
       end
 
-      if @params['RespondType'].nil?
-        @params['RespondType'] = 'JSON'
-        missing_params.delete('RespondType')
+      if @attrs['RespondType'].nil?
+        @attrs['RespondType'] = 'JSON'
+        missing_attrs.delete('RespondType')
       end
 
-      return self if missing_params.count.zero?
-      raise ArgumentError, "The required params: #{missing_params.map { |s| "'#{s}'" }.join(', ')} #{missing_params.count > 1 ? 'are' : 'is'} missing."
+      return self if missing_attrs.count.zero?
+      raise ArgumentError, "The required attrs: #{missing_attrs.map { |s| "'#{s}'" }.join(', ')} #{missing_attrs.count > 1 ? 'are' : 'is'} missing."
+    end
+
+    def set_attr(name, value)
+      @attrs[name] = value
     end
 
     def return_url
-      @params['ReturnURL']
+      @attrs['ReturnURL']
     end
 
     def return_url=(url)
-      @params['ReturnURL'] = url
+      @attrs['ReturnURL'] = url
     end
 
-    def sorted_params
-      @params.sort
+    def notify_url
+      @attrs['NotifyURL']
+    end
+
+    def notify_url=(url)
+      @attrs['NotifyURL'] = url
+    end
+
+    def sorted_attrs
+      @attrs.sort
     end
 
     def to_s
-      sorted_params.map { |k, v| "#{k}=#{v}" }.join('&')
+      sorted_attrs.map { |k, v| "#{k}=#{v}" }.join('&')
     end
 
     def check_value
-      data = "Amt=#{@params['Amt']}&MerchantID=#{@params['MerchantID']}&MerchantOrderNo=#{@params['MerchantOrderNo']}&TimeStamp=#{@params['TimeStamp']}&Version=#{@params['Version']}"
+      data = "Amt=#{@attrs['Amt']}&MerchantID=#{@attrs['MerchantID']}&MerchantOrderNo=#{@attrs['MerchantOrderNo']}&TimeStamp=#{@attrs['TimeStamp']}&Version=#{@attrs['Version']}"
       Spgateway::SHA256.hash(data)
     end
 
@@ -68,15 +80,15 @@ module Spgateway
     private
 
     def method_missing(method_name)
-      if @params.key?(method_name.to_s)
-        @params[method_name.to_s]
+      if @attrs.key?(method_name.to_s)
+        @attrs[method_name.to_s]
       else
         super
       end
     end
 
     def respond_to_missing?(method_name, _include_private = false)
-      @params.key?(method_name.to_s)
+      @attrs.key?(method_name.to_s)
     end
   end
 end

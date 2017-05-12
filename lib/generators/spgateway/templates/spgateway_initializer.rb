@@ -23,20 +23,43 @@ Spgateway.configure do |config|
   config.mpg_gateway_url = 'https://ccore.spgateway.com/MPG/mpg_gateway'
 
   # Callback after the user has been redirect back from Spgateway MPG gateway.
-  config.mpg_callback do |_mpg_response, _controller, _url_helpers|
+  config.mpg_callback do |spgateway_response, controller, url_helpers|
     raise "Please configure mpg_callback in #{__FILE__}"
+    # Put the trade result user facing logic here.
+    #
+    # Be careful not to repeat the order data updating work if you've configure
+    # notify_callback to do it - because both notify_callback and mpg_callback
+    # will be called when the user has done with the payment (notify_callback)
+    # and then be redirected back to the website immediately (mpg_callback),
+    # unexpected results might happen if you do the same thing twice at the
+    # same time.
+    #
+    # Example implementation:
+    # (this only shows the results to the user while we assume that you want
+    # notify_callback - placed at the next section of this file - to do the
+    # real business logic)
+    #
+    # if spgateway_response.status == 'SUCCESS'
+    #   controller.flash[:success] = spgateway_response.message
+    # else
+    #   controller.flash[:error] = spgateway_response.message
+    # end
+    #
+    # controller.redirect_to url_helpers.orders_path
+  end
+
+  # Callback triggered by Spgateway after an order has been paid.
+  config.notify_callback do |spgateway_response|
+    raise "Please configure notify_callback in #{__FILE__}"
     # Put the trade result proceeding logic here.
     #
     # Example implementation:
     #
-    # if mpg_response.status == 'SUCCESS'
-    #   Order.find_by(serial: mpg_response.result.merchant_order_no)
-    #        .update_attributes(paid: true)
-    #   controller.flash[:success] = mpg_response.message
+    # if spgateway_response.status == 'SUCCESS'
+    #   Order.find_by(serial: spgateway_response.result.merchant_order_no)
+    #        .update_attributes!(paid: true)
     # else
-    #   controller.flash[:error] = mpg_response.message
+    #   Rails.logger.info "Spgateway Payment Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
     # end
-    #
-    # controller.redirect_to url_helpers.orders_path
   end
 end
