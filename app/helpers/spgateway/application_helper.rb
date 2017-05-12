@@ -36,6 +36,7 @@ module Spgateway
         :order_number,
         :item_description,
         :amount,
+        :payer_email,
         :class,
         :return_url,
         :mpg_gateway_url
@@ -44,6 +45,7 @@ module Spgateway
       form_attributes[:MerchantOrderNo] = options[:order_number]
       form_attributes[:ItemDesc] = options[:item_description]
       form_attributes[:Amt] = options[:amount]
+      form_attributes[:Email] = options[:payer_email]
 
       form = Spgateway::MPGForm.new(form_attributes)
 

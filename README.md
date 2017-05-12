@@ -28,14 +28,13 @@ then set your `merchant_id`, `hash_key` and `hash_iv` in `config/initializers/sp
 
 ## Basic Usage
 
-1. Place the pay button in a view, for example:
+1. Place the pay button in a view, such as:
 
 ```erb
-<%= spgateway_pay_button 'Go pay', order_number: @order.serial, item_description: @order.description, amount: @order.amount %>
+<%= spgateway_pay_button 'Go pay', order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
 ```
 
-2. Configure how to process payment results in `config/initializers/spgateway.rb`, such as:
-
+2. Configure how to process payment results in `config/initializers/spgateway.rb`, for example:
 
 ```rb
   config.mpg_callback do |mpg_response, controller, url_helpers|
