@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Spgateway.configure do |config|
   # Spgateway merchant ID.
   # You can get your ID on https://www.spgateway.com/shop/member_shop/shop_list
@@ -22,8 +23,8 @@ Spgateway.configure do |config|
   config.mpg_gateway_url = 'https://ccore.spgateway.com/MPG/mpg_gateway'
 
   # Callback after the user has been redirect back from Spgateway MPG gateway.
-  config.mpg_callback do |mpg_response, controller, url_helpers|
-    fail "Please configure mpg_callback in #{__FILE__}"
+  config.mpg_callback do |_mpg_response, _controller, _url_helpers|
+    raise "Please configure mpg_callback in #{__FILE__}"
     # Put the trade result proceeding logic here.
     #
     # Example implementation:

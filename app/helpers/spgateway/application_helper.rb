@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Spgateway
   module ApplicationHelper
     def spgateway_mpg_form_for(
@@ -27,9 +28,9 @@ module Spgateway
     end
 
     def spgateway_pay_button(title, options)
-      raise ArgumentError, "Missing required argument: order_number." unless options[:order_number]
-      raise ArgumentError, "Missing required argument: item_description." unless options[:item_description]
-      raise ArgumentError, "Missing required argument: amount." unless options[:amount]
+      raise ArgumentError, 'Missing required argument: order_number.' unless options[:order_number]
+      raise ArgumentError, 'Missing required argument: item_description.' unless options[:item_description]
+      raise ArgumentError, 'Missing required argument: amount.' unless options[:amount]
 
       form_attributes = options.except(
         :order_number,

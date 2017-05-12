@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 module Spgateway
   class MpgCallbacksController < ApplicationController
     def proceed
-      raise NotImplementedError, "Spgateway.config.mpg_callback is not a proc." unless Spgateway.config.mpg_callback.is_a? Proc
+      raise NotImplementedError, 'Spgateway.config.mpg_callback is not a proc.' unless Spgateway.config.mpg_callback.is_a? Proc
       Spgateway.config.mpg_callback.call(spgateway_mpg_response, self, ::Rails.application.routes.url_helpers)
       redirect_to '/' unless performed?
     end

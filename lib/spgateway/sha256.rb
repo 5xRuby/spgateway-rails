@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Spgateway
   module SHA256
     def self.hash(

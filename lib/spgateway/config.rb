@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Spgateway
   class Config
     include ActiveSupport::Configurable

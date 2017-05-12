@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Spgateway
   class MPGForm
     REQUIRED_PARAMS = %w(Version MerchantID MerchantOrderNo ItemDesc Amt TimeStamp RespondType).freeze

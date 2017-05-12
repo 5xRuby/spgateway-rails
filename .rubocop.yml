@@ -1,0 +1,15 @@
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.4
+  Include:
+    - Rakefile
+    - lib/**/*.rake
+  Exclude:
+    - Gemfile
+    - Appraisals
+    - spgateway-rails.gemspec
+    - lib/generators/**/*
+    - spec/test_app/**/*
+Rails:
+  Enabled: true
+inherit_from: .rubocop_todo.yml

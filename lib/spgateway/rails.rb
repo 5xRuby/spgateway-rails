@@ -1,4 +1,5 @@
-require "spgateway"
+# frozen_string_literal: true
+require 'spgateway'
 
 module Spgateway
   module Rails

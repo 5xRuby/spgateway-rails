@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 require 'spgateway/sha256'
 
 RSpec.describe Spgateway::SHA256 do
-  describe ".hash" do
-    it "work as expected" do
+  describe '.hash' do
+    it 'work as expected' do
       data = 'Amt=200&MerchantID=123456&MerchantOrderNo=20140901001&TimeStamp=1403243286&Version=1.1'
       hash_key = '1A3S21DAS3D1AS65D1'
       hash_iv = '1AS56D1AS24D'
