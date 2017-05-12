@@ -32,72 +32,72 @@ then set your `merchant_id`, `hash_key` and `hash_iv` in `config/initializers/sp
 
 1. Place the pay button in a view, such as:
 
-```erb
-<%= spgateway_pay_button 'Go pay', payment_methods: [:credit_card], order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
-```
+    ```erb
+    <%= spgateway_pay_button 'Go pay', payment_methods: [:credit_card], order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
+    ```
 
-Note that we restrict the supported payment methods to only `credit_card` here.
+    > Note that we restrict the supported payment methods to only `credit_card` here.
 
 2. Configure how to process payment results in `config/initializers/spgateway.rb`, for example:
 
-```rb
-  config.mpg_callback do |mpg_response, controller, url_helpers|
-    if mpg_response.status == 'SUCCESS'
-      Order.find_by(serial: mpg_response.result.merchant_order_no)
-           .update_attributes!(paid: true)
-      controller.flash[:success] = mpg_response.message
-    else
-      controller.flash[:error] = mpg_response.message
-    end
+    ```rb
+      config.mpg_callback do |mpg_response, controller, url_helpers|
+        if mpg_response.status == 'SUCCESS'
+          Order.find_by(serial: mpg_response.result.merchant_order_no)
+               .update_attributes!(paid: true)
+          controller.flash[:success] = mpg_response.message
+        else
+          controller.flash[:error] = mpg_response.message
+        end
 
-    controller.redirect_to url_helpers.orders_path
-  end
-```
+        controller.redirect_to url_helpers.orders_path
+      end
+    ```
 
 ### Supporting non-real-time payment methods: using `notify_callback`
 
 With some payment methods, such as ATM 轉帳 (VACC), 超商代碼繳費 (CVS) or 超商條碼繳費 (BARCODE), users will not complete their transaction on the web browser but maybe in front of an ATM or in a convenient store or so. Spgateway will notify our application later if such transactions has been done, and we will need an additional setup to deal with these notifications.
 
-> Note that you will not be able to test this intergration with an local application server (`http://localhost:3000`) directly, because (in normal cases) Spgateway cannot connect to your local computer. Consider using services like [ngrok](https://ngrok.com/) to get a public URL tunneled to your local application server, and use that public URL in the browser to get things work.
+> Note that you will not be able to test this intergration with an local application server (i.e. `http://localhost:3000`) directly, because (in normal cases) Spgateway cannot connect to your local computer. Consider using services like [ngrok](https://ngrok.com/) to get a public URL tunneled to your local application server, and use that public URL in the browser to get things work.
 
 1. You'll need to setup `mpg_callback` and `notify_callback` like this:
 
-```rb
-  # Callback after the user has been redirect back from Spgateway MPG gateway.
-  config.mpg_callback do |spgateway_response, controller, url_helpers|
-    # Only shows the results to the user here, while notify_callback will do the
-    # actual work.
+    ```rb
+      # Callback after the user has been redirect back from Spgateway MPG gateway.
+      config.mpg_callback do |spgateway_response, controller, url_helpers|
+        # Only shows the results to the user here, while notify_callback will do the
+        # actual work.
 
-    if spgateway_response.status == 'SUCCESS'
-      controller.flash[:success] = spgateway_response.message
-    else
-      controller.flash[:error] = spgateway_response.message
-    end
+        if spgateway_response.status == 'SUCCESS'
+          controller.flash[:success] = spgateway_response.message
+        else
+          controller.flash[:error] = spgateway_response.message
+        end
 
-    controller.redirect_to url_helpers.orders_path
-  end
+        controller.redirect_to url_helpers.orders_path
+      end
 
-  # Callback triggered by Spgateway after an order has been paid.
-  config.notify_callback do |spgateway_response|
+      # Callback triggered by Spgateway after an order has been paid.
+      config.notify_callback do |spgateway_response|
 
-    if spgateway_response.status == 'SUCCESS'
-      # Find the order and mark it as paid.
-      Order.find_by(serial: spgateway_response.result.merchant_order_no)
-           .update_attributes!(paid: true)
-    else
-      # Or log the error.
-      Rails.logger.info "Spgateway Payment Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
-    end
-  end
-```
+        if spgateway_response.status == 'SUCCESS'
+          # Find the order and mark it as paid.
+          Order.find_by(serial: spgateway_response.result.merchant_order_no)
+               .update_attributes!(paid: true)
+        else
+          # Or log the error.
+          Rails.logger.info "Spgateway Payment Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
+        end
+      end
+    ```
 
-The `notify_callback` will be called when Spgateway tries to notify us about payment status updates, nomatter which payment method does the user select. So in the `mpg_callback` block, we should only write code for user-facing logic, to prevent dulipaced work and unexpected results.
+    The `notify_callback` will be called when Spgateway tries to notify us about payment status updates, nomatter which payment method does the user select. So in the `mpg_callback` block, we should only write code for user-facing logic, to prevent dulipaced work and unexpected results.
 
 2. Now you can add non-real-time payment methods to your pay button:
 
-```erb
-<%= spgateway_pay_button 'Go pay', payment_methods: [:credit_card, :vacc, :cvs, :barcode], order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
-```
+    ```erb
+    <%= spgateway_pay_button 'Go pay', payment_methods: [:credit_card, :vacc, :cvs, :barcode], order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
+    ```
 
 
 ## TODO
@@ -107,6 +107,8 @@ The `notify_callback` will be called when Spgateway tries to notify us about pay
 - Build API wrapper for QueryTradeInfo.
 - Add option to double check the payment results after callback.
 - Build API wrapper for CreditCard/Cancel.
+- Wtite docs.
+- Test, test everything!
 
 
 ## Contributing
