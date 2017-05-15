@@ -11,5 +11,14 @@ RSpec.describe Spgateway::SHA256 do
 
       expect(hash).to eq('841F57D750FB4B04B62DDC3ECDC26F1F4028410927DD28BD5B2E34791CC434D2')
     end
+
+    it 'work as expected with hash_iv_first: true' do
+      data = 'Amt=100&MerchantID=1422967&MerchantOrderNo=840f022&TradeNo=14061313541640927'
+      hash_key = 'abcdefg'
+      hash_iv = '1234567'
+      hash = Spgateway::SHA256.hash(data, hash_key: hash_key, hash_iv: hash_iv, hash_iv_first: true)
+
+      expect(hash).to eq('62C687AF6409E46E79769FAF54F54FE7E75AAE50BAF0767752A5C337670B8EDB')
+    end
   end
 end
