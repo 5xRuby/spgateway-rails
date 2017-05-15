@@ -10,6 +10,4 @@ matrix:
   exclude:
   - rvm: 2.2.0
     gemfile: gemfiles/rails_5.gemfile
-before_install:
-  - "rm -f Gemfile.lock"
 script: "bundle exec rspec spec"
