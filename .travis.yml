@@ -2,6 +2,7 @@ language: ruby
 cache: bundler
 rvm:
   - 2.2.0
+  - 2.3.0
   - 2.4.0
 gemfile:
   - gemfiles/rails_4.gemfile
@@ -10,4 +11,8 @@ matrix:
   exclude:
   - rvm: 2.2.0
     gemfile: gemfiles/rails_5.gemfile
+  - rvm: 2.3.0
+    gemfile: gemfiles/rails_5.gemfile
+  - rvm: 2.4.0
+    gemfile: gemfiles/rails_4.gemfile
 script: "bundle exec rspec spec"

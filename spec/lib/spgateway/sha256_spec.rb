@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'spec_helper'
 require 'spgateway/sha256'
 
 RSpec.describe Spgateway::SHA256 do
