@@ -87,6 +87,11 @@ GEM
     minitest (5.10.2)
     multi_json (1.12.1)
     netrc (0.11.0)
+    ngrok-rspec (1.1.18)
+      capybara (>= 2.4)
+      ngrok-tunnel (~> 2.0)
+      rspec (>= 2.99)
+    ngrok-tunnel (2.1.0)
     nokogiri (1.7.2)
       mini_portile2 (~> 2.1.0)
     poltergeist (1.15.0)
@@ -126,6 +131,10 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
     rspec-core (3.6.0)
       rspec-support (~> 3.6.0)
     rspec-expectations (3.6.0)
@@ -178,6 +187,7 @@ DEPENDENCIES
   appraisal
   capybara
   coveralls
+  ngrok-rspec
   poltergeist
   rails (= 4.2)
   rspec-rails

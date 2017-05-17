@@ -8,6 +8,7 @@ Spgateway.configure do |config|
   config.mpg_gateway_url = 'https://ccore.spgateway.com/MPG/mpg_gateway'
 
   config.mpg_callback do |spgateway_response, controller, url_helpers|
+    MPGCallbackTesting.response(spgateway_response)
     controller.redirect_to url_helpers.pages_done_path(
       data: {
         spgateway_response: spgateway_response
@@ -16,5 +17,6 @@ Spgateway.configure do |config|
   end
 
   config.notify_callback do |spgateway_response|
+    NotifyCallbackTesting.response(spgateway_response)
   end
 end

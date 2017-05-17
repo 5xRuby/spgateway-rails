@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 require 'integration_spec_helper'
 
-RSpec.describe 'credit card payment', type: :feature, js: true do
+RSpec.describe 'credit card payment', type: :feature, js: true, ngrok: true do
+  before do
+    NotifyCallbackTesting = double
+    allow(NotifyCallbackTesting).to receive(:response) { |response| @notify_callback_response = response }
+  end
+  before do
+    MPGCallbackTesting = double
+    allow(MPGCallbackTesting).to receive(:response) { |response| @mpg_callback_response = response }
+  end
+
   scenario 'User pays with credit card' do
     page.driver.browser.js_errors = false
+
     visit pages_credit_card_payment_button_path
     click_button 'Go pay'
 
@@ -24,7 +34,18 @@ RSpec.describe 'credit card payment', type: :feature, js: true do
     find(:css, '.put_send_btn .btn').click
 
     wait_for_ajax
+
     wait_for_content 'DONE', max_wait_time: 10
+
+    expect(@notify_callback_response.status).to eq('SUCCESS')
+    expect(@notify_callback_response.result.Card6No).to eq('400022')
+    expect(@notify_callback_response.result.Card4No).to eq('1111')
+    expect(@notify_callback_response.result.Exp).to eq('3201')
+
+    expect(@mpg_callback_response.status).to eq('SUCCESS')
+    expect(@mpg_callback_response.result.Card6No).to eq('400022')
+    expect(@mpg_callback_response.result.Card4No).to eq('1111')
+    expect(@mpg_callback_response.result.Exp).to eq('3201')
 
     data = JSON.parse(find(:css, '#data').text)
 

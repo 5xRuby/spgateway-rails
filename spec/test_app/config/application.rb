@@ -15,6 +15,7 @@ require "spgateway/rails"
 
 module TestApp
   class Application < Rails::Application
+    puts "Ruby Version: #{RUBY_VERSION}"
     puts "Rails Version: #{Rails::VERSION::STRING}"
 
     # Initialize configuration defaults for originally generated Rails version.

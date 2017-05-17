@@ -5,5 +5,8 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rails_helper'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
-Capybara.server_host = 'localhost'
+require 'ngrok/rspec'
+Capybara.server_port = 3003
 Capybara.javascript_driver = :poltergeist
+Ngrok::Rspec.tunnel = { port: Capybara.server_port }
+RSpec.configure { |config| config.include Ngrok::Rspec }
