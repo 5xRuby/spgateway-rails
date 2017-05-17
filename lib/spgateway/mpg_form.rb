@@ -1,6 +1,10 @@
 # frozen_string_literal: true
+require 'spgateway/attr_key_helper'
+
 module Spgateway
   class MPGForm
+    include AttrKeyHelper
+
     REQUIRED_ATTRS = %w(Version MerchantID MerchantOrderNo ItemDesc Amt TimeStamp RespondType).freeze
 
     def initialize(attrs)
@@ -46,22 +50,6 @@ module Spgateway
       @attrs[name] = value
     end
 
-    def return_url
-      @attrs['ReturnURL']
-    end
-
-    def return_url=(url)
-      @attrs['ReturnURL'] = url
-    end
-
-    def notify_url
-      @attrs['NotifyURL']
-    end
-
-    def notify_url=(url)
-      @attrs['NotifyURL'] = url
-    end
-
     def sorted_attrs
       @attrs.sort
     end
@@ -79,16 +67,22 @@ module Spgateway
 
     private
 
-    def method_missing(method_name)
-      if @attrs.key?(method_name.to_s)
-        @attrs[method_name.to_s]
+    def method_missing(method_name, *args)
+      attr_key = convert_to_attr_key(method_name)
+
+      if @attrs.key?(attr_key)
+        @attrs[attr_key]
+      elsif attr_key.end_with?('=') && args[0]
+        @attrs[attr_key.chomp('=')] = args[0]
       else
         super
       end
     end
 
     def respond_to_missing?(method_name, _include_private = false)
-      @attrs.key?(method_name.to_s)
+      attr_key = convert_to_attr_key(method_name)
+
+      attr_key.end_with?('=') || @attrs.key?(attr_key) || sup
     end
   end
 end

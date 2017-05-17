@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'spgateway/attr_key_helper'
+
 module Spgateway
   class Response
     attr_reader :status
@@ -19,6 +21,8 @@ module Spgateway
     end
 
     class Result
+      include AttrKeyHelper
+
       def initialize(data)
         @data = data
       end
@@ -40,7 +44,7 @@ module Spgateway
 
       private
 
-      def method_missing(method_name)
+      def method_missing(method_name, *args)
         data_key = data_key_for(method_name)
         if data_key
           @data[data_key]
@@ -58,7 +62,7 @@ module Spgateway
       end
 
       def possible_data_keys_for(key)
-        [key.to_s, key.to_s.classify, key.to_s.classify.gsub(/Id/, 'ID')]
+        [key.to_s, convert_to_attr_key(key)]
       end
     end
   end
