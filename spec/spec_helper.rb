@@ -29,6 +29,7 @@ SimpleCov.start do
   add_filter 'lib/spgateway/rails/engine.rb'
   add_filter 'lib/spgateway/version.rb'
   add_filter 'lib/generators/spgateway'
+  add_filter 'app/jobs'
 
   track_files '{app,lib}/**/*.rb'
 end
