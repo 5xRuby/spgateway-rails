@@ -48,7 +48,12 @@ module Spgateway
       form.return_url =
         Spgateway::Engine.routes.url_helpers.mpg_callbacks_url(host: request.host, port: request.port)
 
-      if [80, 443].include?(request.port)
+      if [80, 443].include?(request.port) && Spgateway.config.payment_code_callback
+        form.customer_url =
+          Spgateway::Engine.routes.url_helpers.payment_code_callbacks_url(host: request.host, port: request.port)
+      end
+
+      if [80, 443].include?(request.port) && Spgateway.config.notify_callback
         form.notify_url =
           Spgateway::Engine.routes.url_helpers.notify_callbacks_url(host: request.host, port: request.port)
       end

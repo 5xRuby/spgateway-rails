@@ -34,7 +34,7 @@ Spgateway.configure do |config|
     # unexpected results might happen if you do the same thing twice at the
     # same time.
     #
-    # Example implementation:
+    # Implementation example:
     # (this only shows the results to the user while we assume that you want
     # notify_callback - placed at the next section of this file - to do the
     # real business logic)
@@ -49,17 +49,46 @@ Spgateway.configure do |config|
   end
 
   # Callback triggered by Spgateway after an order has been paid.
-  config.notify_callback do |spgateway_response|
-    raise "Please configure notify_callback in #{__FILE__}"
-    # Put the trade result proceeding logic here.
-    #
-    # Example implementation:
-    #
-    # if spgateway_response.status == 'SUCCESS'
-    #   Order.find_by(serial: spgateway_response.result.merchant_order_no)
-    #        .update_attributes!(paid: true)
-    # else
-    #   Rails.logger.info "Spgateway Payment Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
-    # end
-  end
+  # You can ignore this config if you're not using offline payment methods and
+  # had done everything in mpg_callback.
+  # config.notify_callback do |spgateway_response|
+  #   # Put the trade result proceeding logic here.
+  #   #
+  #   # Implementation example:
+  #
+  #   if spgateway_response.status == 'SUCCESS'
+  #     Order.find_by(serial: spgateway_response.result.merchant_order_no)
+  #          .update_attributes!(paid: true)
+  #   else
+  #     Rails.logger.info "Spgateway Payment Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
+  #   end
+  # end
+
+  # Callback when received the ATM transfer account, convenience store payment
+  # code or barcode.
+  # If you want Spgateway to display these payment instructions directly to
+  # your customers directly, simply ignore this config.
+  # config.payment_code_callback do |spgateway_response, controller, url_helpers|
+  #   # Put the trade result proceeding logic here.
+  #   #
+  #   # Implementation example:
+  #   #
+  #   if spgateway_response.status == 'SUCCESS' &&
+  #      spgateway_response.result.payment_type == 'VACC'
+
+  #     bank_code = spgateway_response.result.bank_code
+  #     account_number = spgateway_response.result.code_no
+  #     expired_at =
+  #       DateTime.parse("#{spgateway_response.result.expire_date} #{spgateway_response.result.expire_time} UTC+8")
+  #     Order.find_by(serial: spgateway_response.result.merchant_order_no)
+  #          .update_attributes!(bank_code: bank_code, account_number: account_number, expired_at: expired_at)
+  #     controller.flash[:info] =
+  #       "Please transfer the money to bank code #{bank_code}, account number #{account_number} before #{I18n.l(expired_at)}"
+  #   else
+  #     Rails.logger.error "Spgateway Payment Code Receive Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
+  #     controller.flash[:error] = "Our apologies, but an unexpected error occured, please try again"
+  #   end
+
+  #   controller.redirect_to url_helpers.orders_path
+  # end
 end

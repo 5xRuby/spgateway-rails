@@ -99,10 +99,37 @@ With some payment methods, such as ATM 轉帳 (VACC), 超商代碼繳費 (CVS) o
     <%= spgateway_pay_button 'Go pay', payment_methods: [:credit_card, :vacc, :cvs, :barcode], order_number: @order.serial, item_description: @order.description, amount: @order.amount, payer_email: current_user&.email, class: 'btn btn-success' %>
     ```
 
+### Get the customer's ATM transfer account or payment code and show them on your website with `payment_code_callback`
+
+By default, Spgateway will show the payment instruction of ATM 轉帳 (VACC), 超商代碼繳費 (CVS) or 超商條碼繳費 (BARCODE) to users on their site directly, this way you can not get the payment info and users will not be redirected back to your site.
+
+You can add the `payment_code_callback` config to let users be redirected back to your site, so then you can have the payment info and show it to your users by yourself. Do something like this:
+
+```rb
+  config.payment_code_callback do |spgateway_response, controller, url_helpers|
+    if spgateway_response.status == 'SUCCESS' &&
+       spgateway_response.result.payment_type == 'VACC'
+
+      bank_code = spgateway_response.result.bank_code
+      account_number = spgateway_response.result.code_no
+      expired_at =
+        DateTime.parse("#{spgateway_response.result.expire_date} #{spgateway_response.result.expire_time} UTC+8")
+      Order.find_by(serial: spgateway_response.result.merchant_order_no)
+           .update_attributes!(bank_code: bank_code, account_number: account_number, expired_at: expired_at)
+      controller.flash[:info] =
+        "Please transfer the money to bank code #{bank_code}, account number #{account_number} before #{I18n.l(expired_at)}"
+    else
+      Rails.logger.error "Spgateway Payment Code Receive Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
+      controller.flash[:error] = "Our apologies, but an unexpected error occured, please try again"
+    end
+
+    controller.redirect_to url_helpers.orders_path
+  end
+```
+
 
 ## TODO
 
-- Support CustomerURL.
 - Support ClientBackURL.
 - Build API wrapper for QueryTradeInfo.
 - Add option to double check the payment results after callback.
@@ -113,7 +140,7 @@ With some payment methods, such as ATM 轉帳 (VACC), 超商代碼繳費 (CVS) o
 
 ## Contributing
 
-Just open a PR :)
+Just open an issue or send a PR :)
 
 
 ## License
