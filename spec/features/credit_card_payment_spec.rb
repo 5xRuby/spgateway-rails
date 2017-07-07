@@ -47,6 +47,8 @@ RSpec.describe 'credit card payment', type: :feature, js: true, ngrok: true do
     expect(@mpg_callback_response.result.Card4No).to eq('1111')
     expect(@mpg_callback_response.result.Exp).to eq('3201')
 
+    expect(page).to have_content('Payment has been proceeded.')
+
     data = JSON.parse(find(:css, '#data').text)
 
     expect(data['spgateway_response']['status']).to eq('SUCCESS')

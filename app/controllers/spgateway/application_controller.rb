@@ -15,5 +15,17 @@ module Spgateway
 
     class InvalidResponseError < StandardError
     end
+
+    def respond_to_missing?(method)
+      super || ::Rails.application.routes.url_helpers.respond_to?(method)
+    end
+
+    def method_missing(method, *args)
+      if ::Rails.application.routes.url_helpers.respond_to?(method)
+        ::Rails.application.routes.url_helpers.try(method, *args)
+      else
+        super
+      end
+    end
   end
 end

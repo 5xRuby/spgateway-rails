@@ -6,6 +6,12 @@
   </head>
 
   <body>
+    <% if flash.any? %>
+      <% flash.each do |type, message| %>
+        <%= "#{type}: #{message}" %>
+      <% end %>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

@@ -23,7 +23,7 @@ Spgateway.configure do |config|
   config.mpg_gateway_url = 'https://ccore.spgateway.com/MPG/mpg_gateway'
 
   # Callback after the user has been redirect back from Spgateway MPG gateway.
-  config.mpg_callback do |spgateway_response, controller, url_helpers|
+  config.mpg_callback do |spgateway_response|
     raise "Please configure mpg_callback in #{__FILE__}"
     # Put the trade result user facing logic here.
     #
@@ -40,12 +40,12 @@ Spgateway.configure do |config|
     # real business logic)
     #
     # if spgateway_response.status == 'SUCCESS'
-    #   controller.flash[:success] = spgateway_response.message
+    #   flash[:success] = spgateway_response.message
     # else
-    #   controller.flash[:error] = spgateway_response.message
+    #   flash[:error] = spgateway_response.message
     # end
     #
-    # controller.redirect_to url_helpers.orders_path
+    # redirect_to orders_path
   end
 
   # Callback triggered by Spgateway after an order has been paid.
@@ -68,7 +68,7 @@ Spgateway.configure do |config|
   # code or barcode.
   # If you want Spgateway to display these payment instructions directly to
   # your customers directly, simply ignore this config.
-  # config.payment_code_callback do |spgateway_response, controller, url_helpers|
+  # config.payment_code_callback do |spgateway_response|
   #   # Put the trade result proceeding logic here.
   #   #
   #   # Implementation example:
@@ -82,13 +82,13 @@ Spgateway.configure do |config|
   #       DateTime.parse("#{spgateway_response.result.expire_date} #{spgateway_response.result.expire_time} UTC+8")
   #     Order.find_by(serial: spgateway_response.result.merchant_order_no)
   #          .update_attributes!(bank_code: bank_code, account_number: account_number, expired_at: expired_at)
-  #     controller.flash[:info] =
+  #     flash[:info] =
   #       "Please transfer the money to bank code #{bank_code}, account number #{account_number} before #{I18n.l(expired_at)}"
   #   else
   #     Rails.logger.error "Spgateway Payment Code Receive Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
-  #     controller.flash[:error] = "Our apologies, but an unexpected error occured, please try again"
+  #     flash[:error] = "Our apologies, but an unexpected error occured, please try again"
   #   end
 
-  #   controller.redirect_to url_helpers.orders_path
+  #   redirect_to orders_path
   # end
 end

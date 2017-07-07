@@ -41,16 +41,16 @@ then set your `merchant_id`, `hash_key` and `hash_iv` in `config/initializers/sp
 2. Configure how to process payment results in `config/initializers/spgateway.rb`, for example:
 
     ```rb
-      config.mpg_callback do |mpg_response, controller, url_helpers|
+      config.mpg_callback do |mpg_response|
         if mpg_response.status == 'SUCCESS'
           Order.find_by(serial: mpg_response.result.merchant_order_no)
                .update_attributes!(paid: true)
-          controller.flash[:success] = mpg_response.message
+          flash[:success] = mpg_response.message
         else
-          controller.flash[:error] = mpg_response.message
+          flash[:error] = mpg_response.message
         end
 
-        controller.redirect_to url_helpers.orders_path
+        redirect_to orders_path
       end
     ```
 
@@ -64,17 +64,17 @@ With some payment methods, such as ATM 轉帳 (VACC), 超商代碼繳費 (CVS) o
 
     ```rb
       # Callback after the user has been redirect back from Spgateway MPG gateway.
-      config.mpg_callback do |spgateway_response, controller, url_helpers|
+      config.mpg_callback do |spgateway_response|
         # Only shows the results to the user here, while notify_callback will do the
         # actual work.
 
         if spgateway_response.status == 'SUCCESS'
-          controller.flash[:success] = spgateway_response.message
+          flash[:success] = spgateway_response.message
         else
-          controller.flash[:error] = spgateway_response.message
+          flash[:error] = spgateway_response.message
         end
 
-        controller.redirect_to url_helpers.orders_path
+        redirect_to orders_path
       end
 
       # Callback triggered by Spgateway after an order has been paid.
@@ -106,7 +106,7 @@ By default, Spgateway will show the payment instruction of ATM 轉帳 (VACC), �
 You can add the `payment_code_callback` config to let users be redirected back to your site, so then you can have the payment info and show it to your users by yourself. Do something like this:
 
 ```rb
-  config.payment_code_callback do |spgateway_response, controller, url_helpers|
+  config.payment_code_callback do |spgateway_response|
     if spgateway_response.status == 'SUCCESS' &&
        spgateway_response.result.payment_type == 'VACC'
 
@@ -116,14 +116,14 @@ You can add the `payment_code_callback` config to let users be redirected back t
         DateTime.parse("#{spgateway_response.result.expire_date} #{spgateway_response.result.expire_time} UTC+8")
       Order.find_by(serial: spgateway_response.result.merchant_order_no)
            .update_attributes!(bank_code: bank_code, account_number: account_number, expired_at: expired_at)
-      controller.flash[:info] =
+      flash[:info] =
         "Please transfer the money to bank code #{bank_code}, account number #{account_number} before #{I18n.l(expired_at)}"
     else
       Rails.logger.error "Spgateway Payment Code Receive Not Succeed: #{spgateway_response.status}: #{spgateway_response.message} (#{spgateway_response.result.to_json})"
-      controller.flash[:error] = "Our apologies, but an unexpected error occured, please try again"
+      flash[:error] = "Our apologies, but an unexpected error occured, please try again"
     end
 
-    controller.redirect_to url_helpers.orders_path
+    redirect_to orders_path
   end
 ```
 
