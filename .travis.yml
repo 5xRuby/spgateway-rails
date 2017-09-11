@@ -16,6 +16,7 @@ matrix:
   - rvm: 2.4.0
     gemfile: gemfiles/rails_4.gemfile
 before_install:
+  - "gem update bundler"
   - "mkdir -p ~/bin"
   - "cd ~/bin"
   - "curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -o ngrok.zip"
